@@ -73,7 +73,7 @@ def LDA(reviews, num_of_topics, num_of_iterations):
 
                 # reset word_topic based on the posterior sampling
                 topic_posterior = np.zeros(num_of_topics)
-                # sample from p(z|.)
+                # sample from p(z|.), topic_prob is the normalized posterior predictive distribution
                 for z in range(num_of_topics):
                     topic_posterior[z] = (
                         ndk[j][z] + DL_ALPHA) * (nkw[word][z] + DL_BETA) / (nk[z])
