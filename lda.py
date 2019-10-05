@@ -1,3 +1,10 @@
+"""
+(C) YANG SONG - 2019
+Implementation of the collapsed Gibbs sampler for
+Latent Dirichlet Allocation, as described in
+Finding scientifc topics (Griffiths and Steyvers)
+"""
+
 # Import packages
 import pandas as pd
 import numpy as np
