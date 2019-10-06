@@ -91,4 +91,4 @@ def LDA(reviews, num_of_topics, num_of_iterations):
                 nkw[word][word_topics[j][k]] += 1
                 ndk[j][word_topics[j][k]] += 1
     # return the latest topic assignment for each word
-    return word_topicss
+    return word_topics
