@@ -66,7 +66,7 @@ def LDA(reviews, num_of_topics, num_of_iterations):
             nkw[word][topics[j]] += 1
             ndk[i][topics[j]] += 1
 
-    # Start iterations
+    # iteration
     for i in range(num_of_iterations):
         if i % 100 == 0:
             print(i)
@@ -75,7 +75,7 @@ def LDA(reviews, num_of_topics, num_of_iterations):
                 nkw[word][word_topics[j][k]] -= 1
                 ndk[j][word_topics[j][k]] -= 1
                 # ignore the current topic settings
-                word_topics[j][k] = -1
+                # word_topics[j][k] = -1
                 nk = np.sum(ndk, axis=0)
 
                 # reset word_topic based on the posterior sampling
