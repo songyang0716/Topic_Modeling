@@ -42,7 +42,8 @@ biterms = [biterm for review in clean_reviews for biterm in zip(review.split(" "
 biterms = set(biterms)
 
 
-def BTM(reviews, num_of_topics, num_of_iterations):
+
+def BTM(reviews, biterms, num_of_topics, num_of_iterations):
     ####################################################################################
     ### reviews: contains a list of reviews, and each review is a list of words      ###
     ### num_of_topics: number of topics to generate                                  ###
@@ -54,6 +55,10 @@ def BTM(reviews, num_of_topics, num_of_iterations):
     # constant we set for the LD prior (word distribution in a topic)
     DL_BETA = 0.01
 
+    # number of total biterms
+    N_BITERMS = len(biterms)
+    # unlike to LDA model, in the biterm model, each bigram is coming from a specific topic
+    biterm_topic = np.zeros((N_BITERMS, num_of_topics))
 
 
 
