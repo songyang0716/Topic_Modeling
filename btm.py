@@ -35,11 +35,11 @@ for review in reviews:
     s = [stemmer.stem(word) for word in s if word.isalpha()]
     clean_reviews.append(s)
 
-# extract all the biterms from the list, since in BTM model
-# BTM directly models the word cooccurrence patterns based on biterms instead of documents
+# extract all the unique biterms from the reviews
+# BTM directly models the word cooccurrence patterns based on biterms
 # A biterm denotes an unordered word-pair co-occurring in a short context
-biterms = []
-
+biterms = [biterm for review in clean_reviews for biterm in zip(review.split(" ")[:-1], review.split("")[1:])]
+biterms = set(biterms)
 
 
 def BTM(reviews, num_of_topics, num_of_iterations):
