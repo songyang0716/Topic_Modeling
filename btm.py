@@ -81,17 +81,22 @@ def BTM(biterms, unique_words, num_of_topics, num_of_iterations):
     # unlike to LDA model, in the biterm model, each bigram is coming from a specific topic
     # biterm_topic = np.zeros((N_BITERMS, num_of_topics))
     for iteration in range(num_of_iterations):
+        print(iteration)
         for index, (w1, w2) in enumerate(biterms):
             cur_topic = n_z[index]
             # give a -1 class to the current biterm, means we ignore the current biterm
-            n_z[index] = -1
+            # n_z[index] = -1
             n_wz[w1][cur_topic] -= 1
             n_wz[w2][cur_topic] -= 1
 
-            nz = np.unique(n_z, return_counts=True)[1][1:]
+            # nz = np.unique(n_z, return_counts=True)[1][1:]
+            nz = np.bincount(n_z, minlength=num_of_topics)
+            nz[cur_topic] -= 1
             n_w1z = n_wz[w1]
             n_w2z = n_wz[w2]
-
+#             print(n_w1z)
+#             print(n_w2z)
+#             print(nz)
             z_posterior = (nz + DL_ALPHA) * (n_w1z + DL_BETA) * (n_w2z + DL_BETA) / np.sum(
                 (2 * nz + len(unique_words) * DL_BETA) * (2 * nz + len(unique_words) * DL_BETA))
             topic_prob = z_posterior / np.sum(z_posterior)
@@ -103,5 +108,5 @@ def BTM(biterms, unique_words, num_of_topics, num_of_iterations):
             n_wz[w2][topic_selection] += 1
 
     # return the topic assignment for each biterm
-    return n_z 
+    return n_z
 
