@@ -37,9 +37,20 @@ for review in reviews:
 
 # extract all the unique biterms from the reviews
 # BTM directly models the word cooccurrence patterns based on biterms
-# A biterm denotes an unordered word-pair co-occurring in a short context
-biterms = [biterm for review in clean_reviews for biterm in zip(review.split(" ")[:-1], review.split("")[1:])]
-biterms = set(biterms)
+# A biterm denotes an unordered unique word-pair co-occurring in a short context, each context in our example is a review
+biterms = []
+for clean_review in clean_reviews:
+    clean_review = clean_review.split()
+    review_length = len(clean_review)
+    cur_review_biterms = set()
+    for i in range(review_length):
+        for j in range(i+1, review_length):
+            cur_review_biterms.add((clean_review[i], clean_review[j]))
+    biterms.extend(list(cur_review_biterms))
+
+# bigrams only 
+# biterms = [biterm for review in clean_reviews for biterm in zip(review.split(" ")[:-1], review.split("")[1:])]
+# biterms = set(biterms)
 
 
 
@@ -55,10 +66,16 @@ def BTM(reviews, biterms, num_of_topics, num_of_iterations):
     # constant we set for the LD prior (word distribution in a topic)
     DL_BETA = 0.01
 
-    # number of total biterms
+    # Number of total biterms
     N_BITERMS = len(biterms)
+    # Assign a random topic for each biterm
+    biterm_topic = np.random.randint(0, num_of_topics, N_BITERMS)
+
     # unlike to LDA model, in the biterm model, each bigram is coming from a specific topic
-    biterm_topic = np.zeros((N_BITERMS, num_of_topics))
+    # biterm_topic = np.zeros((N_BITERMS, num_of_topics))
+    for iteration in range(num_of_iterations):
+        for biterm in biterms:
+            
 
 
 

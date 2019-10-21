@@ -54,7 +54,7 @@ def LDA(reviews, num_of_topics, num_of_iterations):
     word_topics = []
     # topic counts in each document, use the index to indicate topic
     ndk = np.zeros((len(reviews), num_of_topics))
-    # topic count over each word, key is word, value is an array of topic counts, use the index to indicate the topic
+    # topic count over each word, key is word, value is an array of topic counts, use the index to indicate the topic 1 to k
     nkw = defaultdict(lambda: np.zeros(num_of_topics))
 
     # randomly initialize a topic for each words in the document
