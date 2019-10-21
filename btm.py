@@ -46,7 +46,8 @@ for clean_review in clean_reviews:
     cur_review_biterms = set()
     for i in range(review_length):
         unique_words.add(clean_review[i])
-        for j in range(i+1, review_length):
+        # we use a interval of 5, if two words are disance to each other less than 5 positions, than count as a biterms
+        for j in range(i+1, min(i+6, len(clean_review))):
             cur_review_biterms.add((clean_review[i], clean_review[j]))
     biterms.extend(list(cur_review_biterms))
 
@@ -55,9 +56,8 @@ for clean_review in clean_reviews:
 # biterms = set(biterms)
 
 
-def BTM(reviews, biterms, unique_words, num_of_topics, num_of_iterations):
+def BTM(biterms, unique_words, num_of_topics, num_of_iterations):
     ####################################################################################
-    ### reviews: contains a list of reviews, and each review is a list of words      ###
     ### num_of_topics: number of topics to generate                                  ###
     ### number_of_iterations: collapsed gibbs sampling iterations                    ###
     ####################################################################################
