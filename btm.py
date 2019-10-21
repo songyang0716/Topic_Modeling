@@ -63,7 +63,7 @@ def BTM(biterms, unique_words, num_of_topics, num_of_iterations):
     ####################################################################################
 
     # constant we set for the LD prior (topic distributions in a document)
-    DL_ALPHA = 50 / num_of_topics
+    DL_ALPHA = 1
     # constant we set for the LD prior (word distribution in a topic)
     DL_BETA = 0.01
     # Number of total biterms
@@ -71,6 +71,8 @@ def BTM(biterms, unique_words, num_of_topics, num_of_iterations):
 
     # Assign a random topic for each biterm
     n_z = np.random.randint(0, num_of_topics, N_BITERMS)
+    n_topics = np.bincount(n_z, minlength=num_of_topics)
+
     # Words count over topics
     # Key is word, value is an array of topic counts, use the index to indicate the topic 1 to k
     n_wz = defaultdict(lambda: np.zeros(num_of_topics))
@@ -83,30 +85,28 @@ def BTM(biterms, unique_words, num_of_topics, num_of_iterations):
     for iteration in range(num_of_iterations):
         print(iteration)
         for index, (w1, w2) in enumerate(biterms):
-            cur_topic = n_z[index]
-            # give a -1 class to the current biterm, means we ignore the current biterm
-            # n_z[index] = -1
-            n_wz[w1][cur_topic] -= 1
-            n_wz[w2][cur_topic] -= 1
+            #             cur_topic = n_z[index]
+            n_wz[w1][n_z[index]] -= 1
+            n_wz[w2][n_z[index]] -= 1
 
-            # nz = np.unique(n_z, return_counts=True)[1][1:]
-            nz = np.bincount(n_z, minlength=num_of_topics)
-            nz[cur_topic] -= 1
+            n_topics[n_z[index]] -= 1
             n_w1z = n_wz[w1]
             n_w2z = n_wz[w2]
-#             print(n_w1z)
-#             print(n_w2z)
-#             print(nz)
-            z_posterior = (nz + DL_ALPHA) * (n_w1z + DL_BETA) * (n_w2z + DL_BETA) / np.sum(
-                (2 * nz + len(unique_words) * DL_BETA) * (2 * nz + len(unique_words) * DL_BETA))
+
+            z_posterior = np.zeros(num_of_topics)
+#             z_posterior = (n_topics + DL_ALPHA) * (n_w1z + DL_BETA) * (n_w2z + DL_BETA) / np.sum(
+#                 (2 * n_topics + len(unique_words) * DL_BETA) * (2 * n_topics + len(unique_words) * DL_BETA))
+            for z in range(num_of_topics):
+                z_posterior[z] = (n_topics[z] + DL_ALPHA) * (n_w1z[z] + DL_BETA) * (n_w2z[z] + DL_BETA) / np.sum(
+                    (2 * n_topics[z] + len(unique_words) * DL_BETA) * (2 * n_topics[z] + len(unique_words) * DL_BETA))
+
             topic_prob = z_posterior / np.sum(z_posterior)
             topic_selection = np.argmax(
                 np.random.multinomial(n=1, pvals=topic_prob, size=1))
-
             n_z[index] = topic_selection
+            n_topics[topic_selection] += 1
             n_wz[w1][topic_selection] += 1
             n_wz[w2][topic_selection] += 1
 
     # return the topic assignment for each biterm
     return n_z
-
