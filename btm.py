@@ -74,8 +74,12 @@ def BTM(reviews, biterms, num_of_topics, num_of_iterations):
     # unlike to LDA model, in the biterm model, each bigram is coming from a specific topic
     # biterm_topic = np.zeros((N_BITERMS, num_of_topics))
     for iteration in range(num_of_iterations):
-        for biterm in biterms:
-            
+        for index, biterm in enumerate(biterms):
+            # give a -1 classes to the current biterm
+            biterm_topic[index] = -1 
+            nz = np.unique(biterm_topic, return_counts=True)[1][1:]
+
+            z_posterior = (nz + DL_ALPHA)
 
 
 
