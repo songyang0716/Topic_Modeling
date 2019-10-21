@@ -39,22 +39,23 @@ for review in reviews:
 # BTM directly models the word cooccurrence patterns based on biterms
 # A biterm denotes an unordered unique word-pair co-occurring in a short context, each context in our example is a review
 biterms = []
+unique_words = set()
 for clean_review in clean_reviews:
     clean_review = clean_review.split()
     review_length = len(clean_review)
     cur_review_biterms = set()
     for i in range(review_length):
+        unique_words.add(clean_review[i])
         for j in range(i+1, review_length):
             cur_review_biterms.add((clean_review[i], clean_review[j]))
     biterms.extend(list(cur_review_biterms))
 
-# bigrams only 
+# bigrams only
 # biterms = [biterm for review in clean_reviews for biterm in zip(review.split(" ")[:-1], review.split("")[1:])]
 # biterms = set(biterms)
 
 
-
-def BTM(reviews, biterms, num_of_topics, num_of_iterations):
+def BTM(reviews, biterms, unique_words, num_of_topics, num_of_iterations):
     ####################################################################################
     ### reviews: contains a list of reviews, and each review is a list of words      ###
     ### num_of_topics: number of topics to generate                                  ###
@@ -65,27 +66,41 @@ def BTM(reviews, biterms, num_of_topics, num_of_iterations):
     DL_ALPHA = 50 / num_of_topics
     # constant we set for the LD prior (word distribution in a topic)
     DL_BETA = 0.01
-
     # Number of total biterms
     N_BITERMS = len(biterms)
+
     # Assign a random topic for each biterm
-    biterm_topic = np.random.randint(0, num_of_topics, N_BITERMS)
+    n_z = np.random.randint(0, num_of_topics, N_BITERMS)
+    # Words count over topics
+    # Key is word, value is an array of topic counts, use the index to indicate the topic 1 to k
+    n_wz = defaultdict(lambda: np.zeros(num_of_topics))
+    for index, (w1, w2) in enumerate(biterms):
+        n_wz[w1][n_z[index]] += 1
+        n_wz[w2][n_z[index]] += 1
 
     # unlike to LDA model, in the biterm model, each bigram is coming from a specific topic
     # biterm_topic = np.zeros((N_BITERMS, num_of_topics))
     for iteration in range(num_of_iterations):
-        for index, biterm in enumerate(biterms):
-            # give a -1 classes to the current biterm
-            biterm_topic[index] = -1 
-            nz = np.unique(biterm_topic, return_counts=True)[1][1:]
+        for index, (w1, w2) in enumerate(biterms):
+            cur_topic = n_z[index]
+            # give a -1 class to the current biterm, means we ignore the current biterm
+            n_z[index] = -1
+            n_wz[w1][cur_topic] -= 1
+            n_wz[w2][cur_topic] -= 1
 
-            z_posterior = (nz + DL_ALPHA)
+            nz = np.unique(n_z, return_counts=True)[1][1:]
+            n_w1z = n_wz[w1]
+            n_w2z = n_wz[w2]
 
+            z_posterior = (nz + DL_ALPHA) * (n_w1z + DL_BETA) * (n_w2z + DL_BETA) / np.sum(
+                (2 * nz + len(unique_words) * DL_BETA) * (2 * nz + len(unique_words) * DL_BETA))
+            topic_prob = z_posterior / np.sum(z_posterior)
+            topic_selection = np.argmax(
+                np.random.multinomial(n=1, pvals=topic_prob, size=1))
 
-
-
-
-
+            n_z[index] = topic_selection
+            n_wz[w1][topic_selection] += 1
+            n_wz[w2][topic_selection] += 1
 
 
 
