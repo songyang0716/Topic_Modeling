@@ -102,5 +102,6 @@ def BTM(reviews, biterms, unique_words, num_of_topics, num_of_iterations):
             n_wz[w1][topic_selection] += 1
             n_wz[w2][topic_selection] += 1
 
-
+    # return the topic assignment for each biterm
+    return n_z 
 
