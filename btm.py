@@ -117,6 +117,12 @@ DL_ALPHA = 1
 topic_distribution = (np.bincount(n_z, minlength=num_of_topics) + DL_ALPHA) / (len(biterms) + num_of_topics * DL_ALPHA)
 
 # The top words from each topics
+n_wz_values = np.array([topic_freq for key, topic_freq in n_wz.items()])
+n_wz_keys = [key for key, topic_freq in n_wz.items()]
 
-
+DL_BETA = 0.01
+wz = (n_wz_values + DL_BETA) / (np.sum(n_wz_values, axis=0) + len(unique_words) * DL_BETA)
+for i in range(num_of_topics):
+    print("for topic {}, the top words are: ".format(i))
+    print(n_wz_keys[np.argsort(wz[:,i])[-10:][::-1]])
 
