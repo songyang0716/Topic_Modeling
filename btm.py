@@ -83,7 +83,6 @@ def BTM(biterms, unique_words, num_of_topics, num_of_iterations):
     # unlike to LDA model, in the biterm model, each bigram is coming from a specific topic
     # biterm_topic = np.zeros((N_BITERMS, num_of_topics))
     for iteration in range(num_of_iterations):
-        print(iteration)
         for index, (w1, w2) in enumerate(biterms):
             #             cur_topic = n_z[index]
             n_wz[w1][n_z[index]] -= 1
@@ -108,5 +107,16 @@ def BTM(biterms, unique_words, num_of_topics, num_of_iterations):
             n_wz[w1][topic_selection] += 1
             n_wz[w2][topic_selection] += 1
 
-    # return the topic assignment for each biterm
-    return n_z
+    # return the topic assignment for each biterm and the topic distribution of each bigram
+    return n_z, n_wz
+
+
+# The topic distribution of the whole copus is
+n_z, n_wz = BTM(biterms, unique_words, 3, 30)
+DL_ALPHA = 1
+topic_distribution = (np.bincount(n_z, minlength=num_of_topics) + DL_ALPHA) / (len(biterms) + num_of_topics * DL_ALPHA)
+
+# The top words from each topics
+
+
+
