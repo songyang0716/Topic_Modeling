@@ -1,6 +1,9 @@
 ## Topic Modeling
 A repo that reproduced multiple topic modeling algorithms from scratch  
 
+### pLSA Probabilistic latent semantic analysis
+https://arxiv.org/pdf/1301.6705.pdf
+
 ### Latent Dirichlet Allocation (LDA) algorithm - lda.py
 The original paper could be found here http://www.jmlr.org/papers/volume3/blei03a/blei03a.pdf, the MCMC algorithm I used is the collapsed Gibbs Sampling https://people.cs.umass.edu/~wallach/courses/s11/cmpsci791ss/readings/griffiths02gibbs.pdf, which to me is simpler to implement than the variational inference proposed by the original author.
 I test it on a small dataset, which includes around 120 Yelp reviews and covers three main categories (seafood, plumbing, pet shops) The algorithm could clearly identify the keywords for each topic.
