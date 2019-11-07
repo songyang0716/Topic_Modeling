@@ -56,13 +56,13 @@ def plsa(clean_reviews, num_of_topics, num_of_iterations, num_of_unique_words):
 
     for i in range(num_of_iterations):
     	# E-step
-    		pwd = np.matmul(pwz, pzd)
-    		for j in range(num_of_unique_words):
-    			for k in range(len(clean_reviews)): 
-    				pzwd[:,j,k] = np.multiply(pwz[j,:], pzd[:,k]) / pwd[j,k]
+		pwd = np.matmul(pwz, pzd)
+		for j in range(num_of_unique_words):
+			for k in range(len(clean_reviews)): 
+				pzwd[:,j,k] = np.multiply(pwz[j,:], pzd[:,k]) / pwd[j,k]
 
     	# M-step
-
+    	
 
 
 
