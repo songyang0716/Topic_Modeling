@@ -46,6 +46,7 @@ def plsa(clean_reviews, num_of_topics, num_of_iterations, num_of_unique_words):
 	####################################################################################
 	# words dictionary
 	word_index = {}
+	index_word = {}
 	index = 0
 	for review in clean_reviews:
 		for word in review:
@@ -53,10 +54,12 @@ def plsa(clean_reviews, num_of_topics, num_of_iterations, num_of_unique_words):
 				pass
 			else:
 				word_index[word] = index
+				index_word[index] = word
 				index += 1
 
 	# words counts matrix
 	n_doc = len(clean_reviews)
+
 	# record the count of each word occured in each document
 	ndw = np.zeros((n_doc, num_of_unique_words))
 	for i, review in enumerate(clean_reviews):
@@ -94,4 +97,4 @@ def plsa(clean_reviews, num_of_topics, num_of_iterations, num_of_unique_words):
 				pzd[j,k] = np.matmul(ndw[k,:], pzwd[j,:,k]) 
 			pzd[:,k] =  pzd[:,k] / np.sum(pzd[:,k])
 
-	return pwz, pzd 
+	return pwz, pzd, index_word
