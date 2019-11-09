@@ -67,34 +67,46 @@ def plsa(clean_reviews, num_of_topics, num_of_iterations, num_of_unique_words):
 			l = word_index[word]
 			ndw[d, l] += 1
 
-
 	# words distribution in each topics
 	nwz = np.random.rand(num_of_unique_words, num_of_topics)
 	pwz = nwz/nwz.sum(axis=0,keepdims=1)
 	# the topic distribution for each document
 	nzd = np.random.rand(num_of_topics, n_doc)
-	pzd = nzd/nzd.sum(axis=1,keepdims=1)
+	pzd = nzd/nzd.sum(axis=0,keepdims=1)
 
 	pzwd = np.zeros((num_of_topics, num_of_unique_words, n_doc))
 
+
 	for i in range(num_of_iterations):
 		# E-step
-		pwd = np.matmul(pwz, pzd)
 		for w in range(num_of_unique_words):
 			for d in range(len(clean_reviews)): 
-				pzwd[:,w,d] = np.multiply(pwz[w,:], pzd[:,d]) / pwd[w,d]
+				### very very important condition !
+				if np.dot(pwz[w,:], pzd[:,d]) == 0:
+					pzwd[:,w,d] = np.zeros(num_of_topics)
+				else:
+					pzwd[:,w,d] = np.multiply(pwz[w,:], pzd[:,d]) / np.dot(pwz[w,:], pzd[:,d])
 
 		# M-step
 		# update pwz
 		for k in range(num_of_topics): 
 			for w in range(num_of_unique_words):
 				pwz[w,k] = np.matmul(ndw[:,w], pzwd[k,w,:])
-			pwz[:,k] = pwz[:,k] / np.sum(pwz[:,k])
+			### very very important condition !
+			if np.sum(pwz[:,k]) == 0:
+				pwz[:,k] = np.zeros(n_doc)
+			else:
+				pwz[:,k] = pwz[:,k] / np.sum(pwz[:,k])
 
-		# update pzd
+
+		# update pzds
 		for d in range(n_doc):
 			for k in range(num_of_topics):
 				pzd[k,d] = np.matmul(ndw[d,:], pzwd[k,:,d]) 
-			pzd[:,d] =  pzd[:,d] / np.sum(pzd[:,d])
+			### very very important condition !
+			if np.sum(pzd[:,d]) == 0:
+				pzd[:,d] = np.zeros(num_of_unique_words)
+			else:
+				pzd[:,d] =  pzd[:,d] / np.sum(pzd[:,d])
 
 	return pwz, pzd, index_word
