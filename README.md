@@ -17,4 +17,4 @@ The original paper could be found in https://www.researchgate.net/publication/22
 
 
 Dataset
-Yelp open sourced parts of the review data https://www.yelp.com/dataset/challenge
+Yelp open sourced review data https://www.yelp.com/dataset
